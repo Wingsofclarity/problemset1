@@ -14,10 +14,10 @@
  *
  */
 
-#include <stdio.h> /* I/O functions: printf() ... */
+#include <stdio.h>
 #include <stdlib.h> /* rand(), srand() */
 #include <unistd.h> /* read(), write() calls */
-#include <assert.h> /* assert() */
+#include <assert.h>
 #include <time.h>   /* time() */
 #include <signal.h> /* kill(), raise() and SIG???? */
 
