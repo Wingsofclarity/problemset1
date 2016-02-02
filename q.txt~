@@ -1,0 +1,58 @@
+Operating systems
+What is the overall purpose of an operating system?
+How can the operating system make several programs execute seemingly at the same time?
+Processes
+What is the difference between a program and a process?
+What does the acronym PCB stand for?
+Whats the purpose of the PCB?
+System calls
+What is the overall purpose of the system call concept? 
+Why are exceptions important when implementing system calls?
+Why are interrupts important when implementing system calls?
+Why can't we simply use ordinary function calls when implementing system calls?
+What is the difference between the system call interface and the actual system calls?
+A common pattern when using system calls is for the caller to first allocate storage and then pass a pointer to this storage to the system call - why?
+Some system calls are blocking, i.e., the caller will block until some condition is met. How can blocking system calls be implemented?
+fork()
+What is the purpose of the fork() system call?
+How many times does fork() return?
+What are the possible return values of fork()?
+What actions must be taken by the kernel when executing the fork() system call?
+exit()
+What is the purpose of the exit() system call?
+What actions must be taken by the kernel when exectuting the exit() system call?
+If an exit status is given to exit(), how is this information handled by the kernel?
+How is exit() related to the  zombie process state?
+wait()
+What is the purpose of the wait() system call?
+What are the possible return values of wait()?
+How can the exit status of a terminated process be retrieved using the wait() system call?
+Hos is wait() related to the  zombie process state?
+exec()
+What is the purpose of the exec() family of system calls?
+When calling a function or a system call, normally you will return back to the caller again. Is this true for the exec() family of system calls (motivate)?
+If a parent process creates a pipe, then calls fork() and the child calls exec - will the child be able to access the pipe?
+Signals
+What is the purpose of signals?
+What is a signal handler?
+What are the limitations of signals?
+Pipes
+What is a pipe?
+How are file descriptors used together with pipes?
+How do we create a pipe?
+How can we make two processes share a pipe in order to communicate with each other?
+How do we read data from a pipe?
+What happens if we read from a pipe with no data?
+What happens if we read from a pipe with no writers?
+How do we write data to a pipe?
+What happens if we write to a full pipe?
+What happens if we write to pipe with no readers?
+Why is it a good practice to all ways close unused file descriptors?
+dup2()
+What is dup2() doing to file descriptors?
+How can this be useful?
+Hidden state
+How is it possible for rand() to return different values on consequitve calls?
+A parent process calls srand() to seed the pseduo random generator (PRNG) and then uses fork() to create a number of child processes. Each child generates a sequence of random number by calling rand(). Can you make any predictions (motivate) about the sequences?
+Reentrant code
+What is meant by reentrant code?
