@@ -1,0 +1,130 @@
+Operating systems
+What is the overall purpose of an operating system?
+Interface mellan hårdvara och mjukvara.
+Fördela resurser mellan program, finna prioriteter. 
+
+How can the operating system make several programs execute seemingly at the same time?
+Kör lite på en process i taget, byter och går runt till alla processer så.
+
+
+Processes
+What is the difference between a program and a process?
+Proccess är när ett program körs i minnet. Program är en körbar fil på hårddisken.
+
+What does the acronym PCB stand for?
+Proccess Control block.
+
+Whats the purpose of the PCB?
+Spara metadata om proccessen.
+
+
+System calls
+What is the overall purpose of the system call concept?
+Kommunicera os direkt.
+
+Why are exceptions important when implementing system calls?
+För att os ska få köra litegrann :)
+
+Why are interrupts important when implementing system calls?
+En slags exception, men os säger till proccess.
+
+Why can't we simply use ordinary function calls when implementing system calls?
+???
+
+What is the difference between the system call interface and the actual system calls?
+write och read är inge riktiga systemcalls. De orsakar exception sen kör den actual system call.
+
+A common pattern when using system calls is for the caller to first allocate storage and then pass a pointer to this storage to the system call - why?
+Flera retur värden ish.
+
+Some system calls are blocking, i.e., the caller will block until some condition is met. How can blocking system calls be implemented?
+
+
+fork()
+What is the purpose of the fork() system call?
+Skapa nya processer.
+
+How many times does fork() return?
+En gång i vardera proccess. Barn proccess pid, 0.
+
+What are the possible return values of fork()?
+pid, 0 eller -1.
+
+What actions must be taken by the kernel when executing the fork() system call?
+Copy PCB.
+
+exit()
+What is the purpose of the exit() system call?
+Exit a proccess.
+
+What actions must be taken by the kernel when exectuting the exit() system call?
+Removes all memory except PCB. Sedan när retur värde läst raderas PCB
+
+If an exit status is given to exit(), how is this information handled by the kernel?
+lagras i pcb.
+
+How is exit() related to the  zombie process state?
+En zombie har kvar sin PCB även om proccesses är exitad.
+
+wait()
+What is the purpose of the wait() system call?
+What are the possible return values of wait()?
+How can the exit status of a terminated process be retrieved using the wait() system call?
+Hos is wait() related to the  zombie process state?
+
+exec()
+What is the purpose of the exec() family of system calls?
+When calling a function or a system call, normally you will return back to the caller again. Is this true for the exec() family of system calls (motivate)?
+If a parent process creates a pipe, then calls fork() and the child calls exec - will the child be able to access the pipe?
+
+Signals
+What is the purpose of signals?
+What is a signal handler?
+What are the limitations of signals?
+
+Pipes
+What is a pipe?
+Är ett slags objekt i os för att kommunicera mellan proccesser. (Det är en kö).
+En väg. Stäng för inga problem.
+
+How are file descriptors used together with pipes?
+En referense till in och ut strömmar.
+
+How do we create a pipe?
+Systemcall pipe().
+
+How can we make two processes share a pipe in order to communicate with each other?
+Anropa pipe() INNAN fork().
+
+How do we read data from a pipe?
+read(fildescriptor)
+
+What happens if we read from a pipe with no data?
+blockerar.
+
+What happens if we read from a pipe with no writers?
+Inget speciellt. Om det är tomt kommer ett specialmeddelande "end of file".
+
+How do we write data to a pipe?
+write(fildescriptor)
+
+What happens if we write to a full pipe?
+blockerar.
+
+What happens if we write to pipe with no readers?
+Inget speciellt??
+
+Why is it a good practice to allways close unused file descriptors?
+Frigöra minne. Inte råka skriva fel.
+
+
+dup2()
+What is dup2() doing to file descriptors?
+
+How can this be useful?
+
+Hidden state
+How is it possible for rand() to return different values on consequitve calls?
+A parent process calls srand() to seed the pseduo random generator (PRNG) and then uses fork() to create a number of child processes. Each child generates a sequence of random number by calling rand(). Can you make any predictions (motivate) about the sequences?
+Reentrant code
+What is meant by reentrant code?

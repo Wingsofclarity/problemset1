@@ -34,9 +34,9 @@ int main(int argc, char *argv[])
 	//         exec system call. Using the function sprintf and the arg1 
 	//         variable you can pass the id parameter to the children 
 
-	// char arg0[] = "./shooter"; 
-	// char arg1[10]; 
-	// char *args[] = {arg0, arg1, NULL};
+	char arg0[] = "./shooter"; 
+	char arg1[10]; 
+	char *args[] = {arg0, arg1, NULL};
 	
 
 	// TODO 2: Declare pipe variables
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 	//         before game master exits 
 
 	for (i = 0; i < NUM_PLAYERS; i++) {
-
+	  
 	}
 
 	return 0;
