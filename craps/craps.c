@@ -59,17 +59,21 @@ int main(int argc, char *argv[])
   //         - re-direct standard-inputs/-outputs of the players
   //         - use execv to start the players
   //         - pass arguments using args and sprintf
-
+  int *pids = malloc(sizeof(int)*NUM_PLAYERS);
+  int myPid = 0;
+  
   for (i = 0; i < NUM_PLAYERS; i++) {
-    int f = fork();
-    if (f == 0 ){
-      puts("I am a child.");
-      break;
+    pids[i] = fork();
+    if (pids[i] == 0 ){
+      myPid = pids[i];
+      free(pids);
+      printf("I am a child. \n");
+      execv(arg0, args);
     }
-    else if (f>0){
-      printf("I am the parent who just spawned %i.\n", f);
+    else if (pids[i]>0){
+      printf("I am the parent who just spawned %i.\n", pids[i]);
     }
-    else if (f==-1){
+    else if (pids[i]==-1){
       puts("Child could not be created.");
     }
     else {
@@ -77,7 +81,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  if (1) return 0;
+  
 
   seed = time(NULL);
 
