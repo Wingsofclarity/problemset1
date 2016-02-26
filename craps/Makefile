@@ -24,7 +24,7 @@ endif
 
 all: craps shooter
 
-craps: craps.o common.o
+craps: craps.o common.o child.o
 
 shooter: shooter.o common.o
 
@@ -47,5 +47,8 @@ pack: clean
 	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
 	sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
 	@rm -f $*.d.tmp
+
+run: all
+	./craps
 
 -include $(SRCS:%.c=%.d)

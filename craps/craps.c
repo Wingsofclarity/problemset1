@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <time.h>   /* time() */
 #include <signal.h> /* kill(), raise() and SIG???? */
+#include "child.h"
 
 #include <sys/types.h> /* pid */
 #include <sys/wait.h> /* waitpid() */
@@ -44,6 +45,7 @@ int main(int argc, char *argv[])
   //         - Of which data type should they be?
   //         - How many pipes are needed?
   //         - Try to choose self-explanatory variable names, e.g. seedPipe, scorePipe
+  //pipe();
 	
 
   // TODO 3: initialize the communication with the players, i.e. create the pipes
@@ -63,6 +65,8 @@ int main(int argc, char *argv[])
   int myPid = 0;
   
   for (i = 0; i < NUM_PLAYERS; i++) {
+    //printf("Trace: %i \n",i);
+    
     pids[i] = fork();
     if (pids[i] == 0 ){
       myPid = pids[i];
@@ -82,7 +86,7 @@ int main(int argc, char *argv[])
   }
 
   
-
+  puts("Trace before time!");
   seed = time(NULL);
 
 
