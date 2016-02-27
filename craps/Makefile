@@ -50,5 +50,6 @@ pack: clean
 
 run: all
 	./craps
+	echo "hej"
 
 -include $(SRCS:%.c=%.d)

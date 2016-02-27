@@ -25,6 +25,6 @@ int main(int argc, char *argv[])
   }
 
   shooter(id, seed_rd_fd, score_wr_fd);
-	
+  puts("Shooter exiting properly.");
   return 0;
 }

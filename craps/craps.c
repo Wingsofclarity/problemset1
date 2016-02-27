@@ -29,7 +29,6 @@
 
 int main(int argc, char *argv[])
 {
-  printf("NUM_PLAYERS = %i \n", NUM_PLAYERS);
   int i, seed;
 
   // TODO 1: Un-comment the following variables to use them in the 
@@ -61,32 +60,37 @@ int main(int argc, char *argv[])
   //         - re-direct standard-inputs/-outputs of the players
   //         - use execv to start the players
   //         - pass arguments using args and sprintf
-  int *pids = malloc(sizeof(int)*NUM_PLAYERS);
-  int myPid = 0;
+  child_t *children = malloc(sizeof(child_t)*NUM_PLAYERS);
   
   for (i = 0; i < NUM_PLAYERS; i++) {
-    //printf("Trace: %i \n",i);
-    
-    pids[i] = fork();
-    if (pids[i] == 0 ){
-      myPid = pids[i];
-      free(pids);
-      printf("I am a child. \n");
+
+    int pid = fork();
+
+    if (pid == 0 ){
+      printf("I am a child. Initiating execv. \n");
       execv(arg0, args);
     }
-    else if (pids[i]>0){
-      printf("I am the parent who just spawned %i.\n", pids[i]);
+    else if (pid>0){
+      printf("I am the parent who just spawned %i.\n", pid);
+      int *pipes=malloc(sizeof(int)*2);;
+      pipe(pipes);
+      children[i] = child_new(pid,pipes,pipes+(sizeof(int)));
     }
-    else if (pids[i]==-1){
+    else if (pid==-1){
       puts("Child could not be created.");
+      return -1;
     }
     else {
       puts("Unknown error.");
+      return -1;
     }
   }
 
+  for (int i = 0; i<NUM_PLAYERS; i++){
+    printf("Proccess in spot %i has pid %i. \n", i, child_get_pid(children[i]));
+  }
+
   
-  puts("Trace before time!");
   seed = time(NULL);
 
 
@@ -130,5 +134,6 @@ int main(int argc, char *argv[])
   for (i = 0; i < NUM_PLAYERS; i++) {
   }
 
+  puts("Craps exiting properly.");
   return 0;
 }
