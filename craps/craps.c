@@ -26,8 +26,10 @@
 #include <sys/wait.h> /* waitpid() */
 
 #include "common.h"
+#define NUM_PLAYERS 2
 
-int main(int argc, char *argv[])
+//int main(int argc, char *argv[])
+int main()
 {
   int i, seed;
 
@@ -35,9 +37,9 @@ int main(int argc, char *argv[])
   //         exec system call. Using the function sprintf and the arg1 
   //         variable you can pass the id parameter to the children 
 
-  char arg0[] = "./shooter"; 
-  char arg1[10]; 
-  char *args[] = {arg0, arg1, NULL};
+  //char arg0[] = "./shooter"; 
+  //char arg1[10]; 
+  //char *args[] = {arg0, arg1, NULL};
 	
 
   // TODO 2: Declare pipe variables
@@ -63,17 +65,20 @@ int main(int argc, char *argv[])
   child_t *children = malloc(sizeof(child_t)*NUM_PLAYERS);
   
   for (i = 0; i < NUM_PLAYERS; i++) {
-
+    int *pipes=malloc(sizeof(int)*2);;
+    pipe(pipes);
     int pid = fork();
 
     if (pid == 0 ){
-      printf("I am a child. Initiating execv. \n");
-      execv(arg0, args);
+      //printf("I am a child. Initiating execv. \n");
+      //execv(arg0, args);
+      shooter(pid,pipes[0],pipes[1]);
+      return 0;
     }
     else if (pid>0){
       printf("I am the parent who just spawned %i.\n", pid);
-      int *pipes=malloc(sizeof(int)*2);;
-      pipe(pipes);
+      /*void *from = (void*) pipes;
+	void *to = (void*) pipes+sizeof(int);*/
       children[i] = child_new(pid,pipes,pipes+(sizeof(int)));
     }
     else if (pid==-1){
@@ -87,7 +92,7 @@ int main(int argc, char *argv[])
   }
 
   for (int i = 0; i<NUM_PLAYERS; i++){
-    printf("Proccess in spot %i has pid %i. \n", i, child_get_pid(children[i]));
+    printf("Proccess in spot %i has pid %i. I will read from %i and write to %i. \n", i, child_get_pid(children[i]), child_get_from(children[i]), child_get_to(children[i]));
   }
 
   

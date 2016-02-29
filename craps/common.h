@@ -14,8 +14,6 @@
 #include <signal.h>
 #include <unistd.h>
 
-#define NUM_PLAYERS 6
-
 void shooter(int pid, int seed_fd_rd, int score_fd_write);
 void waitstat(pid_t pid, int status);
 

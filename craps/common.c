@@ -78,49 +78,50 @@ void win_handler(int signum)
 
 void shooter(int id, int seed_fd_rd, int score_fd_wr)
 {
-	pid_t pid;
-	int score, seed = 0;
+  printf("I am %i , I am reading from %i and writing to %i \n", id, seed_fd_rd, score_fd_wr);
+  pid_t pid;
+  int score, seed = 0;
 
 
-	// TODO 6: Install SIGUSR1 handler
+  // TODO 6: Install SIGUSR1 handler
 
 
-	// TODO 7: Install SIGUSR2 handler
+  // TODO 7: Install SIGUSR2 handler
 
 
-	pid = getpid();
+  pid = getpid();
 
-	fprintf(stderr, "player %d: I'm in this game (PID = %ld)\n",
-		id, (long)pid);
-
-
-	// TODO 8: roll the dice, but before that, read a seed from the parent via pipe
+  fprintf(stderr, "player %d: I'm in this game (PID = %ld)\n",
+	  id, (long)pid);
 
 
-	srand(seed);
+  // TODO 8: roll the dice, but before that, read a seed from the parent via pipe
 
-	score = rand() % 10000;
+
+  srand(seed);
+
+  score = rand() % 10000;
 	
-	fprintf(stderr, "player %d: I scored %d (PID = %ld)\n", id, score, (long)pid);
+  fprintf(stderr, "player %d: I scored %d (PID = %ld)\n", id, score, (long)pid);
 
 
-	// TODO 9: send my score back to the master via pipe
+  // TODO 9: send my score back to the master via pipe
 
 
-	// spin while I wait for the results
-	while (!results) ;
+  // spin while I wait for the results
+  while (!results) ;
 
-	if (winner)
-		fprintf(stderr, "player %d: Walking away rich\n", id);
+  if (winner)
+    fprintf(stderr, "player %d: Walking away rich\n", id);
 
-	fprintf(stderr, "player %d: Leaving the game (PID = %ld)\n",
-		id, (long)pid);
-
-
-	// TODO 10: free resources and exit with success
+  fprintf(stderr, "player %d: Leaving the game (PID = %ld)\n",
+	  id, (long)pid);
 
 
-	exit(EXIT_SUCCESS);
+  // TODO 10: free resources and exit with success
+
+
+  exit(EXIT_SUCCESS);
 }
 
 
@@ -134,13 +135,13 @@ void shooter(int id, int seed_fd_rd, int score_fd_wr)
 
 void waitstat(pid_t pid, int status)
 {
-	if (WIFEXITED(status))
-		fprintf(stderr, "Child with PID = %ld terminated normally, exit"
-			" status = %d\n", (long)pid, WEXITSTATUS(status));
-	else {
-		fprintf(stderr, "%s: Internal error: Unhandled case, PID = %ld,"
-			" status = %d\n", __func__, (long)pid, status);
-		exit(1);
-	}
-	fflush(stderr);
+  if (WIFEXITED(status))
+    fprintf(stderr, "Child with PID = %ld terminated normally, exit"
+	    " status = %d\n", (long)pid, WEXITSTATUS(status));
+  else {
+    fprintf(stderr, "%s: Internal error: Unhandled case, PID = %ld,"
+	    " status = %d\n", __func__, (long)pid, status);
+    exit(1);
+  }
+  fflush(stderr);
 }
