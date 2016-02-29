@@ -26,7 +26,7 @@
 #include <sys/wait.h> /* waitpid() */
 
 #include "common.h"
-#define NUM_PLAYERS 2
+#define NUM_PLAYERS 1
 
 //int main(int argc, char *argv[])
 int main()
@@ -65,21 +65,27 @@ int main()
   child_t *children = malloc(sizeof(child_t)*NUM_PLAYERS);
   
   for (i = 0; i < NUM_PLAYERS; i++) {
-    int *pipes=malloc(sizeof(int)*2);;
-    pipe(pipes);
+    int *pipe_seed=malloc(sizeof(int)*2);
+    int *pipe_score=malloc(sizeof(int)*2);
+    pipe(pipe_seed);
+    pipe(pipe_score);
     int pid = fork();
 
     if (pid == 0 ){
       //printf("I am a child. Initiating execv. \n");
       //execv(arg0, args);
-      shooter(pid,pipes[0],pipes[1]);
+      close(pipe_seed[1]);
+      close(pipe_score[0]);
+      shooter(pid,pipe_seed[0],pipe_score[1]);
       return 0;
     }
     else if (pid>0){
       printf("I am the parent who just spawned %i.\n", pid);
-      /*void *from = (void*) pipes;
-	void *to = (void*) pipes+sizeof(int);*/
-      children[i] = child_new(pid,pipes,pipes+(sizeof(int)));
+      /*void *from = (void*) pipe_seed;
+	void *to = (void*) pipe_seed+sizeof(int);*/
+      close(pipe_seed[0]);
+      close(pipe_score[1]);
+      children[i] = child_new(pid,pipe_score[1],pipe_seed[0]);
     }
     else if (pid==-1){
       puts("Child could not be created.");
@@ -101,6 +107,8 @@ int main()
 
   for (i = 0; i < NUM_PLAYERS; i++) {
     seed++;
+    child_write(children[i]);
+    return -1;
     // TODO 5: send the seed to the players (write using pipes)
   }
 

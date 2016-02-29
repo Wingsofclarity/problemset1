@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h> /* read(), write() calls */
+#include <stdio.h>
 #include "child.h"
 
 struct child{
@@ -35,4 +37,10 @@ int child_get_from(child_t c){
 
 int child_get_to(child_t c){
   return (int) c->to_child;
+}
+
+void child_write(child_t c){
+  //int a = write(c->to_child, "thisistheseed", sizeof(char)*10);
+  int a = write(child_get_to(c), "j", sizeof(char)*10);
+  printf("We wrote: %i \n",a);
 }
