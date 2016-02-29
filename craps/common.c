@@ -78,7 +78,7 @@ void win_handler(int signum)
 
 void shooter(int id, int seed_fd_rd, int score_fd_wr)
 {
-  printf("I am %i , I am reading from %i and writing to %i \n", id, seed_fd_rd, score_fd_wr);
+  fprintf(stderr, "I am %i , I am reading from %i and writing to %i \n", id, seed_fd_rd, score_fd_wr);
   pid_t pid;
   int score, seed = 0;
 
@@ -96,9 +96,9 @@ void shooter(int id, int seed_fd_rd, int score_fd_wr)
 
 
   // TODO 8: roll the dice, but before that, read a seed from the parent via pipe
-  char c[10];
-  int a = read(seed_fd_rd,c,10*sizeof(char));
-  printf("Heres the seed: %s \n",c);
+  int *integor = 0;
+  int a = read(seed_fd_rd,integor,sizeof(int));
+  printf("Heres the seed: %i \n", *integor);
   printf("We read: %i \n",a);
 
   srand(seed);

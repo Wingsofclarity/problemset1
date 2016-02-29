@@ -69,23 +69,20 @@ int main()
     int *pipe_score=malloc(sizeof(int)*2);
     pipe(pipe_seed);
     pipe(pipe_score);
+
+    printf(" seed[0]: %i \n seed[1]: %i \n score[0]: %i \n score[1]: %i \n",pipe_seed[0],pipe_seed[1], pipe_score[0], pipe_score[1]);
+    
     int pid = fork();
 
     if (pid == 0 ){
       //printf("I am a child. Initiating execv. \n");
       //execv(arg0, args);
-      close(pipe_seed[1]);
-      close(pipe_score[0]);
       shooter(pid,pipe_seed[0],pipe_score[1]);
       return 0;
     }
     else if (pid>0){
       printf("I am the parent who just spawned %i.\n", pid);
-      /*void *from = (void*) pipe_seed;
-	void *to = (void*) pipe_seed+sizeof(int);*/
-      close(pipe_seed[0]);
-      close(pipe_score[1]);
-      children[i] = child_new(pid,pipe_score[1],pipe_seed[0]);
+      children[i] = child_new(pid,pipe_seed[1],pipe_score[0]);
     }
     else if (pid==-1){
       puts("Child could not be created.");
@@ -107,9 +104,7 @@ int main()
 
   for (i = 0; i < NUM_PLAYERS; i++) {
     seed++;
-    child_write(children[i]);
-    return -1;
-    // TODO 5: send the seed to the players (write using pipes)
+    //child_write_int(children[i],seed);
   }
 
 

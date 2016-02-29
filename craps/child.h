@@ -16,6 +16,10 @@ int child_get_from(child_t);
 
 int child_get_to(child_t);
 
-void child_write(child_t);
+void child_write_int(child_t, int);
+
+void child_write(child_t, void *);
+
+int child_read_int(child_t);
 
 #endif

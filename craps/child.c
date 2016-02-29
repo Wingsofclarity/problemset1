@@ -10,7 +10,7 @@ struct child{
   pipe_t to_child;
 };
 
-child_t child_new(int pid, pipe_t afrom_child, pipe_t ato_child){
+child_t child_new(int pid, pipe_t ato_child, pipe_t afrom_child){
   child_t c = malloc(sizeof(child_t));
   child_set_pid(c,pid);  
   c->to_child=ato_child;
@@ -39,8 +39,20 @@ int child_get_to(child_t c){
   return (int) c->to_child;
 }
 
-void child_write(child_t c){
-  //int a = write(c->to_child, "thisistheseed", sizeof(char)*10);
-  int a = write(child_get_to(c), "j", sizeof(char)*10);
-  printf("We wrote: %i \n",a);
+void child_write_int(child_t c, int i){
+  if(write(child_get_to(c), &i, sizeof(int))!=sizeof(int)){
+    perror("Error in write to pipe.");
+    exit(0);
+  }
+
+}
+
+void child_write(child_t c, void *p){
+  write(child_get_to(c), p, sizeof(int));
+}
+
+int child_read_int(child_t c){
+  int *i=0;
+  read(child_get_from(c),i,sizeof(int));
+  return *i;
 }
