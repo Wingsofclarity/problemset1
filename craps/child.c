@@ -44,7 +44,6 @@ void child_write_int(child_t c, int i){
     perror("Error in write to pipe.");
     exit(0);
   }
-
 }
 
 void child_write(child_t c, void *p){

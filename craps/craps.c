@@ -68,9 +68,22 @@ int main()
     int *pipe_seed=malloc(sizeof(int)*2);
     int *pipe_score=malloc(sizeof(int)*2);
     pipe(pipe_seed);
-    pipe(pipe_score);
+    //pipe(pipe_score);
+    pipe_score[0]=0;
+    pipe_score[1]=0;
 
-    printf(" seed[0]: %i \n seed[1]: %i \n score[0]: %i \n score[1]: %i \n",pipe_seed[0],pipe_seed[1], pipe_score[0], pipe_score[1]);
+    //Test
+    /*
+    int wr = 4949;
+    write(pipe_seed[1],&wr,sizeof(int));
+
+    int res;
+    read(pipe_seed[0],&res,sizeof(int));
+    fprintf(stderr, "We read this number.. %i from %i \n", res, pipe_seed[0]);
+    */
+    //Test end
+
+    fprintf(stderr, " seed[0]: %i \n seed[1]: %i \n score[0]: %i \n score[1]: %i \n",pipe_seed[0],pipe_seed[1], pipe_score[0], pipe_score[1]);
     
     int pid = fork();
 
@@ -95,28 +108,30 @@ int main()
   }
 
   for (int i = 0; i<NUM_PLAYERS; i++){
-    printf("Proccess in spot %i has pid %i. I will read from %i and write to %i. \n", i, child_get_pid(children[i]), child_get_from(children[i]), child_get_to(children[i]));
+    fprintf(stderr, "Proccess in spot %i has pid %i. I will read from %i and write to %i. \n", i, child_get_pid(children[i]), child_get_from(children[i]), child_get_to(children[i]));
   }
-
   
   seed = time(NULL);
 
 
   for (i = 0; i < NUM_PLAYERS; i++) {
     seed++;
-    //child_write_int(children[i],seed);
+    child_write_int(children[i],seed);
   }
+
+
 
 
   // TODO 6: read the dice results from the players via pipes, find the winner
-
-  for (i = 0; i < NUM_PLAYERS; i++) {
-
+  int winner_index=0;
+  for (i = 1; i < NUM_PLAYERS; i++) {
+    if(child_read_int(children[i])>child_read_int(children[winner_index])){
+      winner_index=i;
+    }
   }
-
-
-  printf("master: player %d WINS\n", winner);
-
+  
+  printf("master: player %i WINS\n", winner_index);
+  
 
   // TODO 7: signal the winner
   //         - which command do you use to send signals?

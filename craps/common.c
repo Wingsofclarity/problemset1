@@ -28,7 +28,7 @@
 volatile sig_atomic_t winner = 0;
 
 // TODO 1: Change this to 0 to make the children spin in the for loop before they receive the SIGUSR2 signal
-volatile sig_atomic_t results = 1;
+volatile sig_atomic_t results = 0;
 
 
 // end_handler - handle the SIGUSR2 signal, the player will receive
@@ -63,7 +63,8 @@ void win_handler(int signum)
 
   // TODO 5: this player is the winner, make the appropriate changes upon reception of this singal
   //         - use the "results" flag declared earlier
-
+  results=1;
+  winner=1;
 
   // register the signal handler for the next use
   signal(signum, win_handler);
@@ -96,24 +97,29 @@ void shooter(int id, int seed_fd_rd, int score_fd_wr)
 
 
   // TODO 8: roll the dice, but before that, read a seed from the parent via pipe
-  int *integor = 0;
-  int a = read(seed_fd_rd,integor,sizeof(int));
-  printf("Heres the seed: %i \n", *integor);
-  printf("We read: %i \n",a);
-
+  int integor = 0;
+  if(read(seed_fd_rd,&integor,sizeof(int))!=sizeof(int)){
+    exit(EXIT_FAILURE);
+  }
+  seed=integor;
   srand(seed);
 
   score = rand() % 10000;
 	
   fprintf(stderr, "player %d: I scored %d (PID = %ld)\n", id, score, (long)pid);
-
+  if (write(score_fd_wr, &score, sizeof(int))!=sizeof(int)){
+    exit(EXIT_FAILURE);
+  }
 
   // TODO 9: send my score back to the master via pipe
 
 
   // spin while I wait for the results
-  while (!results) ;
-
+  //fprintf(stderr,"Results = %i\n", results);
+  int a = 2;
+  while (!results) {
+    a++;
+  }
   if (winner)
     fprintf(stderr, "player %d: Walking away rich\n", id);
 
