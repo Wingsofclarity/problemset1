@@ -31,6 +31,7 @@
 int main()
 {
   int i, seed;
+  int read_from_here;
 
   //char arg0[] = "./shooter"; 
   //char arg1[10]; 
@@ -43,17 +44,23 @@ int main()
     int *pipe_score=malloc(sizeof(int)*2);
     pipe(pipe_seed);
     pipe(pipe_score);
+
+
+    //fprintf(stderr, "For %i Seed %i -> %i \n", i, pipe_seed[1],pipe_seed[0]);
+    //fprintf(stderr, "For %i Score %i -> %i \n", i , pipe_score[1], pipe_score[0]);
     
     int pid = fork();
     
-    fprintf(stderr, "-----------TRACE!!!!!!------------\n");
-    
     if (pid == 0 ){
+      close(pipe_seed[1]);
+      close(pipe_score[0]);
       shooter(i,pipe_seed[0],pipe_score[1]);
       return 0;
     }
     else if (pid>0){
-      printf("I am the parent who just spawned %i.\n", pid);
+      close(pipe_seed[0]);
+      close(pipe_score[1]);
+      read_from_here=pipe_score[0];
       children[i] = child_new(pid,pipe_seed[1],pipe_score[0]);
     }
     else if (pid==-1){
@@ -64,11 +71,9 @@ int main()
       puts("Unknown error.");
       return -1;
     }
-    //return 0;
   }
 
   for (int i = 0; i<NUM_PLAYERS; i++){
-    fprintf(stderr, "Proccess in spot %i has pid %i. I will read from %i and write to %i. \n", i, child_get_pid(children[i]), child_get_from(children[i]), child_get_to(children[i]));
   }
 
   
@@ -81,45 +86,43 @@ int main()
     child_write_int(children[i],seed);
   }
 
-
-
-
-
-  // TODO 6: read the dice results from the players via pipes, find the winner
-  int winner_index=0;
-  for (i = 1; i < NUM_PLAYERS; i++) {
-    child_set_dice(children[i], child_read_int(children[i]));
+  sleep(5);
+  for (i = 0; i < NUM_PLAYERS; i++) {
+    child_set_score(children[i], child_read_int(children[i]));
   }
   
+  int winner_index=0;  
   for (i = 1; i < NUM_PLAYERS; i++) {
-    if(child_get_dice(children[i])>child_get_dice(children[winner_index])){
+    if(child_get_score(children[i])>child_get_score(children[winner_index])){
       winner_index=i;
     }
   }
 
   
-  printf("master: player %i WINS\n", winner_index);
+  printf("PARENT: master: player %i WINS\n", winner_index);
   
 
   // TODO 7: signal the winner
   //         - which command do you use to send signals?
   //         - you will need the pid of the winner
   int winner_pid=child_get_pid(children[winner_index]);
-  sleep(5);
+  sleep(3);
   kill(winner_pid, SIGUSR1);
 	
 
   // TODO 8: signal all players the end of game
   //         - you will need the pid of all the players
-  int exit_pid = wait(0);
-  fprintf(stderr, "PID %i has exited\n",exit_pid);
+
     
   for (i = 0; i < NUM_PLAYERS; i++) {
-
+    kill(child_get_pid(children[i]), SIGUSR2);
+  }
+  for (i = 0; i < NUM_PLAYERS; i++) {
+    int exit_pid = wait(0);
+    fprintf(stderr, "PARENT: PID %i has exited\n",exit_pid);
   }
 
-
-  printf("master: the game ends\n");
+  printf("PARENT: master: the game ends\n");
 
 
   // TODO 9: cleanup resources and exit with success
@@ -127,8 +130,9 @@ int main()
   //         before game master exits 
 
   for (i = 0; i < NUM_PLAYERS; i++) {
+    child_free(children[i]);
   }
 
-  puts("Craps exiting properly.");
+  puts("PARENT: Craps exiting properly.");
   return 0;
 }

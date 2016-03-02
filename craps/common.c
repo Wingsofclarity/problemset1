@@ -44,7 +44,7 @@ void end_handler(int signum)
 	
   // TODO 3: "leave the game": make the appropriate changes to let the current process exit
   //         - use the "results" flag declared earlier
-
+  results=1;
 
   // register the signal handler for the next use
   signal (signum, end_handler);
@@ -58,23 +58,15 @@ void end_handler(int signum)
 
 void win_handler(int signum)
 {
-  fprintf(stderr, "Message recieved.\n");
   // TODO 4: Check that the signum is indeed SIGUSR1, otherwise exit with failure
-  fflush(stdout);
 
   // TODO 5: this player is the winner, make the appropriate changes upon reception of this singal
   //         - use the "results" flag declared earlier
-  results=1;
   winner=1;
 
   // register the signal handler for the next use
   signal(signum, win_handler);
 }
-
-void win_handler_aux(){
-  win_handler(0);
-}
-
 
 // shooter - it simulates the players action during a game of lack.
 //
@@ -91,6 +83,7 @@ void shooter(int id, int seed_fd_rd, int score_fd_wr)
 
   // TODO 6: Install SIGUSR1 handler
   signal(SIGUSR1, win_handler);
+  signal(SIGUSR2, end_handler);
 
 
   // TODO 7: Install SIGUSR2 handler
