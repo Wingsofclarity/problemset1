@@ -81,7 +81,8 @@ int main(void) {
     num_of_children = execute_command_line(command_line_buffer, argv);
 
     for (int i = 0; i < num_of_children; i ++) {
-      // TODO 1: Make the parent wait for all children. 
+      // TODO 1: Make the parent wait for all children.
+      wait(NULL); 
     }
 
 
@@ -159,8 +160,9 @@ void create_pipe(enum cmd_pos pos, int new_pipe[]) {
 
   // TODO 2: If there are more than one command in the pipeline,
   //         create a pipe for all but the last command.
-  
-    
+  if(pos == first || pos == middle) {
+    pipe(new_pipe);
+  }
 }
 
 
@@ -208,7 +210,13 @@ void parent_close_pipes(enum cmd_pos pos, int left_pipe[], int right_pipe[]) {
   // TODO 3: The parent must close un-used pipe descriptors. You need
   // to figure out wich descriptors that must be closes when.
 
+  if(pos == first || pos == middle) {
+    close(right_pipe[1]);
+  }
 
+  if(pos == middle || pos == last) {
+    close(left_pipe[0]);
+  }
 }
 
 
@@ -218,7 +226,13 @@ void child_redirect_io(enum cmd_pos pos, int left_pipe[], int right_pipe[]) {
   // pipe and STDOUT to write to the right pipe depending on the
   // position in the pipeline.
  
+  if(pos == first || pos == middle) {
+    dup2(right_pipe[1], STDOUT_FILENO);
+  }
 
+  if(pos == middle || pos == last) {
+    dup2(left_pipe[0], STDIN_FILENO);
+  }
 
 }
 
