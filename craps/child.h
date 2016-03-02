@@ -22,4 +22,8 @@ void child_write(child_t, void *);
 
 int child_read_int(child_t);
 
+void child_set_dice(child_t c, int a);
+
+int child_get_dice(child_t c);
+  
 #endif

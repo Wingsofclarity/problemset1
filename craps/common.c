@@ -58,8 +58,9 @@ void end_handler(int signum)
 
 void win_handler(int signum)
 {
+  fprintf(stderr, "Message recieved.\n");
   // TODO 4: Check that the signum is indeed SIGUSR1, otherwise exit with failure
-
+  fflush(stdout);
 
   // TODO 5: this player is the winner, make the appropriate changes upon reception of this singal
   //         - use the "results" flag declared earlier
@@ -68,6 +69,10 @@ void win_handler(int signum)
 
   // register the signal handler for the next use
   signal(signum, win_handler);
+}
+
+void win_handler_aux(){
+  win_handler(0);
 }
 
 
@@ -85,6 +90,7 @@ void shooter(int id, int seed_fd_rd, int score_fd_wr)
 
 
   // TODO 6: Install SIGUSR1 handler
+  signal(SIGUSR1, win_handler);
 
 
   // TODO 7: Install SIGUSR2 handler
@@ -99,6 +105,7 @@ void shooter(int id, int seed_fd_rd, int score_fd_wr)
   // TODO 8: roll the dice, but before that, read a seed from the parent via pipe
   int integor = 0;
   if(read(seed_fd_rd,&integor,sizeof(int))!=sizeof(int)){
+    perror("EERRRRORRR");
     exit(EXIT_FAILURE);
   }
   seed=integor;
@@ -108,6 +115,7 @@ void shooter(int id, int seed_fd_rd, int score_fd_wr)
 	
   fprintf(stderr, "player %d: I scored %d (PID = %ld)\n", id, score, (long)pid);
   if (write(score_fd_wr, &score, sizeof(int))!=sizeof(int)){
+    perror("EERRRRORRR");
     exit(EXIT_FAILURE);
   }
 

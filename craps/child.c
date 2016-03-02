@@ -6,6 +6,7 @@
 
 struct child{
   int pid;
+  int dice_value;
   pipe_t from_child;
   pipe_t to_child;
 };
@@ -15,6 +16,7 @@ child_t child_new(int pid, pipe_t ato_child, pipe_t afrom_child){
   child_set_pid(c,pid);  
   c->to_child=ato_child;
   c->from_child=afrom_child;
+  c->dice_value=0;
   return c;
 }
 
@@ -52,6 +54,17 @@ void child_write(child_t c, void *p){
 
 int child_read_int(child_t c){
   int *i=0;
-  read(child_get_from(c),i,sizeof(int));
+  if (read(child_get_from(c),i,sizeof(int))!=sizeof(int)){
+    perror("Read fail.\n");
+    exit(0);
+  }
   return *i;
+}
+
+void child_set_dice(child_t c, int a){
+  c->dice_value=a;
+}
+
+int child_get_dice(child_t c){
+  return c->dice_value;
 }
