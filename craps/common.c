@@ -117,12 +117,11 @@ void shooter(int id, int seed_fd_rd, int score_fd_wr)
 
   // spin while I wait for the results
   //fprintf(stderr,"Results = %i\n", results);
-  int a = 2;
-  while (!results) {
-    a++;
-  }
-  if (winner)
+  while (!results) {  }
+  
+  if (winner){
     fprintf(stderr, "player %d: Walking away rich\n", id);
+  }
 
   fprintf(stderr, "player %d: Leaving the game (PID = %ld)\n",
 	  id, (long)pid);

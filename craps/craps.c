@@ -85,8 +85,7 @@ int main()
     seed++;
     child_write_int(children[i],seed);
   }
-
-  sleep(5);
+  
   for (i = 0; i < NUM_PLAYERS; i++) {
     child_set_score(children[i], child_read_int(children[i]));
   }
@@ -106,7 +105,7 @@ int main()
   //         - which command do you use to send signals?
   //         - you will need the pid of the winner
   int winner_pid=child_get_pid(children[winner_index]);
-  sleep(3);
+  //sleep(3);
   kill(winner_pid, SIGUSR1);
 	
 
