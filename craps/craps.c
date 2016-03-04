@@ -52,9 +52,17 @@ int main()
     int pid = fork();
     
     if (pid == 0 ){
+      dup2(pipe_seed[0], STDIN_FILENO);
+      dup2(pipe_score[1], STDOUT_FILENO);
+      close(pipe_seed[0]);
       close(pipe_seed[1]);
       close(pipe_score[0]);
-      shooter(i,pipe_seed[0],pipe_score[1]);
+      close(pipe_score[1]);
+
+      char id_str[20];
+      sprintf(id_str, "%d", i);
+      char* const argv[] = { "./shooter", id_str, NULL };
+      execv("./shooter", argv);
       return 0;
     }
     else if (pid>0){
@@ -71,9 +79,6 @@ int main()
       puts("Unknown error.");
       return -1;
     }
-  }
-
-  for (int i = 0; i<NUM_PLAYERS; i++){
   }
 
   

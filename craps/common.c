@@ -97,10 +97,16 @@ void shooter(int id, int seed_fd_rd, int score_fd_wr)
 
   // TODO 8: roll the dice, but before that, read a seed from the parent via pipe
   int integor = 0;
-  if(read(seed_fd_rd,&integor,sizeof(int))!=sizeof(int)){
-    perror("EERRRRORRR");
-    exit(EXIT_FAILURE);
+  unsigned int read_count = 0;
+  while(read_count < sizeof(int)) {
+    int res = read(seed_fd_rd,((char*)&integor)+read_count,sizeof(int));
+    if(res == -1){
+      perror("EERRRRORRR when reading");
+      exit(EXIT_FAILURE);
+    }
+    read_count += res;
   }
+
   seed=integor;
   srand(seed);
 
@@ -108,7 +114,7 @@ void shooter(int id, int seed_fd_rd, int score_fd_wr)
 	
   fprintf(stderr, "player %d: I scored %d (PID = %ld)\n", id, score, (long)pid);
   if (write(score_fd_wr, &score, sizeof(int))!=sizeof(int)){
-    perror("EERRRRORRR");
+    perror("EERRRRORRR when writing");
     exit(EXIT_FAILURE);
   }
 
